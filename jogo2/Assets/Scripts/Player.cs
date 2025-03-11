@@ -4,18 +4,18 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-  public float velocidade = 10f;
-  public float focaPulo = 10f;
+    public float velocidade = 10f;
+    public float focaPulo = 10f;
 
-    public bool parado = false;
+    public bool noChao = false;
 
-    public bool andando = false;
+    private bool isRun = false; // Variável para controlar a animação de movimento
 
-  private Rigidbody2D _rigidbody2D;
-  private SpriteRenderer  _spriteRenderer;
-  private Animator _animator;
+    private Rigidbody2D _rigidbody2D;
+    private SpriteRenderer _spriteRenderer;
+    private Animator _animator;
 
-    // Start is called before the first frame update
+    // Start é chamado antes do primeiro frame update
     void Start()
     {
         _rigidbody2D = gameObject.GetComponent<Rigidbody2D>();
@@ -23,12 +23,11 @@ public class Player : MonoBehaviour
         _animator = gameObject.GetComponent<Animator>();
     }
 
-
-   void OnCollisionStay2D(Collision2D collision)
+    void OnCollisionStay2D(Collision2D collision)
     {
         if (collision.gameObject.tag == "chao")
         {
-            parado = true;
+            noChao = true; // O personagem está no chão
         }
     }
 
@@ -36,51 +35,46 @@ public class Player : MonoBehaviour
     {
         if (collision.gameObject.tag == "chao")
         {
-            parado = false;
+            noChao = false; // O personagem saiu do chão
         }
     }
 
-    // Update is called once per frame
+    // Update é chamado uma vez por frame
     void Update()
     {
-        andando = false;
-        
-      if(Input.GetKey(KeyCode.LeftArrow))
-      {
-        gameObject.transform.position += new Vector3(-velocidade*Time.deltaTime,0,0);
-        //rigidbody2D.AddForce(new Vector2(-velocidade,0));
-        _spriteRenderer.flipX = true;
-        Debug.Log("LeftArrow");
+        isRun = false; // Inicialmente, o personagem não está se movendo
 
-        if (parado == true)
+        // Movimento para a esquerda
+        if (Input.GetKey(KeyCode.LeftArrow))
         {
-            andando = true;
-        }
-      }
-        
+            transform.position += new Vector3(-velocidade * Time.deltaTime, 0, 0);
+            _spriteRenderer.flipX = true; // Vira o sprite para a esquerda
 
-      if(Input.GetKey(KeyCode.RightArrow))
-      {
-        gameObject.transform.position += new Vector3(velocidade*Time.deltaTime,0,0);
-        //rigidbody2D.AddForce(new Vector2(velocidade,0));
-         _spriteRenderer.flipX = false;
-         Debug.Log("RightArrow");
-         
-         if (parado == true)
-         {
-             andando = true;
-         }
-      }
-
-        if (Input.GetKeyDown(KeyCode.Space) && noChao == true)
-        {
-            _rigidbody2D.AddForce(new Vector2(0, 1) * focaPulo,ForceMode2D.Impulse);
-
-            Debug.Log("Jump");
+            if (noChao)
+            {
+                isRun = true; // O personagem está se movendo
+            }
         }
 
-        _animator.SetBool("andando",andando);
-        
-     
+        // Movimento para a direita
+        if (Input.GetKey(KeyCode.RightArrow))
+        {
+            transform.position += new Vector3(velocidade * Time.deltaTime, 0, 0);
+            _spriteRenderer.flipX = false; // Vira o sprite para a direita
+
+            if (noChao)
+            {
+                isRun = true; // O personagem está se movendo
+            }
+        }
+
+        // Pulo
+        if (Input.GetKeyDown(KeyCode.Space) && noChao)
+        {
+            _rigidbody2D.AddForce(new Vector2(0, 1) * focaPulo, ForceMode2D.Impulse);
+        }
+
+        // Atualiza o parâmetro "IsRun" no Animator
+        _animator.SetBool("IsRun", isRun); // Atualiza o parâmetro no Animator
     }
 }
