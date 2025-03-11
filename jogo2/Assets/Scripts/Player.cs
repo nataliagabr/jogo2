@@ -7,7 +7,7 @@ public class Player : MonoBehaviour
   public float velocidade = 10f;
   public float focaPulo = 10f;
 
-    public bool noChao = false;
+    public bool parado = false;
 
     public bool andando = false;
 
@@ -28,7 +28,7 @@ public class Player : MonoBehaviour
     {
         if (collision.gameObject.tag == "chao")
         {
-            noChao = true;
+            parado = true;
         }
     }
 
@@ -36,7 +36,7 @@ public class Player : MonoBehaviour
     {
         if (collision.gameObject.tag == "chao")
         {
-            noChao = false;
+            parado = false;
         }
     }
 
@@ -52,7 +52,7 @@ public class Player : MonoBehaviour
         _spriteRenderer.flipX = true;
         Debug.Log("LeftArrow");
 
-        if (noChao == true)
+        if (parado == true)
         {
             andando = true;
         }
@@ -66,7 +66,7 @@ public class Player : MonoBehaviour
          _spriteRenderer.flipX = false;
          Debug.Log("RightArrow");
          
-         if (noChao == true)
+         if (parado == true)
          {
              andando = true;
          }
@@ -79,7 +79,7 @@ public class Player : MonoBehaviour
             Debug.Log("Jump");
         }
 
-        _animator.SetBool("Andando",andando);
+        _animator.SetBool("andando",andando);
         
      
     }
